@@ -1,0 +1,70 @@
+---
+
+spring:
+  application:
+    name: circular-stream
+  cloud:
+    stream:
+      default:
+        group: circular-stream
+        contentType: application/json;charset=UTF-8
+        consumer: &defaultConsumerBindings
+          partitioned: true
+          concurrency: 1
+          contentType: application/json;charset=UTF-8
+        producer:  &defaultProducerBindings
+          headerMode: none
+          partitionCount: 12
+          partitionKeyExpression: headers['PARTITION_KEY']
+          messageKeyExpression: headers['PARTITION_KEY']?.getBytes()
+          sync: true
+      bindings:
+        discard:
+          destination: ${topic-prefix:}discard
+        reprocess:
+          destination: ${topic-prefix:}reprocess
+      kafka:
+        binder:
+          autoCreateTopics: false
+        bindings:
+          discard:
+            producer: *defaultProducerBindings
+          reprocess:
+            consumer: *defaultConsumerBindings
+  kafka:
+    properties:
+      ssl:
+        endpoint:
+          identification:
+            algorithm:
+  main:
+    banner-mode: 'off'
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+      fail_on_empty_beans: false
+    deserialization:
+      accept_single_value_as_array: true
+
+azure:
+  servicebus:
+    subscription-receive-mode: peeklock
+    allow-telemetry: false
+
+logging:
+  level:
+    com:
+      microsoft:
+        azure:
+          servicebus: ERROR
+      dharrigan:
+        payload: INFO
+    org:
+      apache:
+        kafka:
+          common: ERROR
+          clients:
+            consumer:
+              ConsumerConfig: ERROR
+            producer:
+              ProducerConfig: ERROR

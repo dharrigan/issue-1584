@@ -1,0 +1,9 @@
+---
+
+azure:
+  servicebus:
+    connection-string: Endpoint=testEndpoint;SharedAccessKeyName=testSharedAccessKeyName;SharedAccessKey=testSharedAccessKey
+
+spring:
+  profiles:
+    active: local
