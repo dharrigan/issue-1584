@@ -53,7 +53,7 @@ java {
 
 repositories {
     mavenLocal()
-    maven("$nexusUrl/maven-public")
+    mavenCentral()
 }
 
 configurations {
